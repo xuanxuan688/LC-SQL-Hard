@@ -70,8 +70,21 @@ from Employee)
 
 select id, company, salary
 from cte
-where rnk>=cnt/2.0 and rnk<=(cnt/2.0+1)
+where rnk>=cnt/2.0 and rnk<=(cnt/2.0+1)     -- or: where rnk between cnt/2.0 and cnt/2.0+1
 
 
 --- first get the rank of employees in each company and # of employees
 --- 先在各公司做薪水排名，排名在 [员工总数/2，员工总数/2+1] 区间内的员工就是领中位数薪水的
+
+
+
+
+
+
+
+SELECT MIN(A.Id) AS Id, A.Company, A.Salary
+FROM Employee A, Employee B
+WHERE A.Company = B.Company
+GROUP BY A.Company, A.Salary
+HAVING SUM(CASE WHEN B.Salary >= A.Salary then 1 ELSE 0 END) >= COUNT(*)/2
+AND SUM(CASE WHEN B.Salary <= A.Salary then 1 ELSE 0 END) >= COUNT(*)/2
